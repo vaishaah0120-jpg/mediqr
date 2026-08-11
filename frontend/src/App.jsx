@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Patients from './pages/Patients';
 import ScanQR from './pages/ScanQR';
+import Appointments from './pages/receptionist/Appointments';
 
 // Public website pages
 import Home from './pages/public/Home';
@@ -42,6 +43,15 @@ function App() {
             
             {/* QR Scanner & Retrieval Page */}
             <Route path="scan" element={<ScanQR />} />
+            
+            {/* Receptionist Appointments Page */}
+            <Route path="appointments" element={<Appointments />} />
+            
+            {/* Receptionist Check-in Queue redirecting to dashboard check-in desk */}
+            <Route path="checkin" element={<Dashboard />} />
+            
+            {/* Doctor Patient Queue redirecting to dashboard queue */}
+            <Route path="queue" element={<Dashboard />} />
             
             {/* Sub-route placeholders to support sidebar links navigation */}
             <Route

@@ -71,8 +71,9 @@ const Appointment = () => {
   const fallbackMockDoctors = () => {
     const mock = [
       { _id: '60c72b2f9b1d8a23d45678b1', fullName: 'Dr. Sarah Connor', specialization: 'Cardiologist' },
-      { _id: 'mock-doctor-neurology', fullName: 'Dr. Stephen Strange', specialization: 'Neurologist' },
-      { _id: 'mock-doctor-pediatrics', fullName: 'Dr. Clara Oswald', specialization: 'Pediatrician' }
+      { _id: '60c72b2f9b1d8a23d45678b2', fullName: 'Dr. Stephen Strange', specialization: 'Neurologist' },
+      { _id: '60c72b2f9b1d8a23d45678b3', fullName: 'Dr. Clara Oswald', specialization: 'Pediatrician' },
+      { _id: '60c72b2f9b1d8a23d45678b4', fullName: 'Dr. Gregory House', specialization: 'Nephrologist' }
     ];
     setDoctors(mock);
     setFormData((prev) => ({ ...prev, doctorId: mock[0]._id }));
