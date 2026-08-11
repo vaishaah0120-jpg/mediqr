@@ -15,6 +15,30 @@ export const mockUsers = [
     specialization: 'Cardiologist',
   },
   {
+    _id: '60c72b2f9b1d8a23d4567893',
+    name: 'Dr. Stephen Strange (Demo)',
+    email: 'strange@mediqr.com',
+    password: 'DoctorPass123',
+    role: 'doctor',
+    specialization: 'Neurologist',
+  },
+  {
+    _id: '60c72b2f9b1d8a23d4567894',
+    name: 'Dr. Clara Oswald (Demo)',
+    email: 'clara@mediqr.com',
+    password: 'DoctorPass123',
+    role: 'doctor',
+    specialization: 'Pediatrician',
+  },
+  {
+    _id: '60c72b2f9b1d8a23d4567895',
+    name: 'Dr. Gregory House (Demo)',
+    email: 'house@mediqr.com',
+    password: 'DoctorPass123',
+    role: 'doctor',
+    specialization: 'Nephrologist',
+  },
+  {
     _id: '60c72b2f9b1d8a23d4567892',
     name: 'John Doe (Demo)',
     email: 'receptionist@mediqr.com',
@@ -22,6 +46,7 @@ export const mockUsers = [
     role: 'receptionist',
   }
 ];
+
 
 export const mockPatients = [
   {
@@ -79,6 +104,30 @@ export const mockDoctors = [
     fullName: 'Dr. Sarah Connor',
     specialization: 'Cardiologist',
     phone: '+15550301'
+  },
+  {
+    _id: '60c72b2f9b1d8a23d45678b2',
+    user: '60c72b2f9b1d8a23d4567893', // Dr Stephen Strange User ID
+    doctorId: 'DOC-1102',
+    fullName: 'Dr. Stephen Strange',
+    specialization: 'Neurologist',
+    phone: '+15550302'
+  },
+  {
+    _id: '60c72b2f9b1d8a23d45678b3',
+    user: '60c72b2f9b1d8a23d4567894', // Dr Clara Oswald User ID
+    doctorId: 'DOC-1103',
+    fullName: 'Dr. Clara Oswald',
+    specialization: 'Pediatrician',
+    phone: '+15550303'
+  },
+  {
+    _id: '60c72b2f9b1d8a23d45678b4',
+    user: '60c72b2f9b1d8a23d4567895', // Dr Gregory House User ID
+    doctorId: 'DOC-1104',
+    fullName: 'Dr. Gregory House',
+    specialization: 'Nephrologist',
+    phone: '+15550304'
   }
 ];
 
