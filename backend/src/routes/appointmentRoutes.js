@@ -5,11 +5,14 @@ import {
   getAppointmentsByDoctor,
   getAppointmentsByPatient,
   updateAppointmentStatus,
+  createPublicAppointment,
 } from '../controllers/appointmentController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateAppointment } from '../middleware/validationMiddleware.js';
 
 const router = express.Router();
+
+router.post('/public', createPublicAppointment);
 
 router
   .route('/')

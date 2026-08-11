@@ -15,6 +15,8 @@ router
   .get(protect, getDoctors)
   .post(protect, authorize('admin'), validateDoctor, createDoctor);
 
+router.get('/public', getDoctors);
+
 router
   .route('/:id')
   .get(protect, getDoctorById)

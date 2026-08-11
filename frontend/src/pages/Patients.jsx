@@ -41,7 +41,7 @@ const Patients = () => {
   const [bloodGroup, setBloodGroup] = useState('O+');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
-  
+
   // Emergency Contact nested states
   const [ecName, setEcName] = useState('');
   const [ecPhone, setEcPhone] = useState('');
@@ -236,7 +236,7 @@ const Patients = () => {
       alert('Pop-up window blocked. Please enable pop-ups to print wristbands.');
       return;
     }
-    
+
     printWindow.document.write(`
       <html>
         <head>
@@ -399,7 +399,7 @@ const Patients = () => {
             className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:border-teal-500 transition-all text-slate-800 dark:text-slate-100 placeholder-slate-400"
           />
         </div>
-        
+
         <span className="text-xs text-slate-400 font-medium">
           Showing {patients.length} records in this page
         </span>
@@ -541,7 +541,7 @@ const Patients = () => {
                 <span className="text-[10px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-widest block border-b border-slate-100 dark:border-slate-900 pb-1">
                   1. Clinical Demographics
                 </span>
-                
+
                 <div>
                   <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Full Name</label>
                   <input
@@ -762,10 +762,10 @@ const Patients = () => {
               {/* Printable QR Wristband Card */}
               <div className="border-t border-slate-100 dark:border-slate-900 pt-4">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center block mb-3">Wristband QR Profile</span>
-                
+
                 <div id="printable-wristband" className="p-4 rounded-2xl bg-gradient-to-br from-slate-950 to-slate-900 border border-slate-800 shadow-xl max-w-xs mx-auto text-left relative">
                   <div className="absolute top-0 right-0 w-20 h-20 bg-teal-500/5 rounded-full blur-xl"></div>
-                  
+
                   <div className="flex justify-between items-start mb-3.5">
                     <div>
                       <h4 className="font-black text-sm text-white leading-none">{selectedPatient.fullName}</h4>

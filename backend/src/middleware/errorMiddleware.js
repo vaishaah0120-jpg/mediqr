@@ -9,6 +9,10 @@ export const errorHandler = (err, req, res, next) => {
     name: err.name,
     code: err.code,
     stack: err.stack,
+    errors: err.errors ? Object.keys(err.errors).reduce((acc, key) => {
+      acc[key] = err.errors[key].message;
+      return acc;
+    }, {}) : undefined,
   });
 
   // Mongoose Bad ObjectId Cast Error (e.g. invalid ID format)

@@ -3,10 +3,19 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './components/DashboardLayout';
+import PublicLayout from './components/PublicLayout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Patients from './pages/Patients';
 import ScanQR from './pages/ScanQR';
+
+// Public website pages
+import Home from './pages/public/Home';
+import About from './pages/public/About';
+import Services from './pages/public/Services';
+import Departments from './pages/public/Departments';
+import Appointment from './pages/public/Appointment';
+import Contact from './pages/public/Contact';
 
 function App() {
   return (
@@ -59,9 +68,18 @@ function App() {
             />
           </Route>
 
+          {/* Public Website Routes */}
+          <Route path="/" element={<PublicLayout />}>
+            <Route index element={<Home />} />
+            <Route path="about" element={<About />} />
+            <Route path="services" element={<Services />} />
+            <Route path="departments" element={<Departments />} />
+            <Route path="appointment" element={<Appointment />} />
+            <Route path="contact" element={<Contact />} />
+          </Route>
+
           {/* Fallback Redirects */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

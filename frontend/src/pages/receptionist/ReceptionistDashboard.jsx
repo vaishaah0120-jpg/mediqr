@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Users, UserPlus, QrCode, ShieldCheck, HeartPulse, Send, Printer, CalendarRange, Clock } from 'lucide-react';
+import { Users, UserPlus, QrCode, ShieldCheck, HeartPulse, Send, Printer, CalendarRange, Clock, AlertCircle } from 'lucide-react';
 
 const ReceptionistDashboard = () => {
   const { token } = useAuth();
@@ -13,6 +13,9 @@ const ReceptionistDashboard = () => {
   // Simulated generated QR profile
   const [generatedQR, setGeneratedQR] = useState(null);
   
+  const [formError, setFormError] = useState('');
+  const [formLoading, setFormLoading] = useState(false);
+  
   // Mock recent registrations
   const [checkins, setCheckins] = useState([
     { name: 'James Carter', age: 34, qrId: 'MEDQR-9021', time: '10 mins ago', triage: 'Urgent' },
@@ -23,6 +26,8 @@ const ReceptionistDashboard = () => {
   const handleRegisterPatient = async (e) => {
     e.preventDefault();
     if (!patientName || !patientAge || !patientReason) return;
+    setFormError('');
+    setFormLoading(true);
 
     const payload = {
       fullName: patientName,
@@ -78,11 +83,13 @@ const ReceptionistDashboard = () => {
         setPatientReason('');
         setPatientTriage('Routine');
       } else {
-        alert(resData.message || 'Registration failed');
+        setFormError(resData.message || 'Registration failed');
       }
     } catch (err) {
       console.error('Error in receptionist registration:', err);
-      alert('Could not connect to database server.');
+      setFormError('Could not connect to database server.');
+    } finally {
+      setFormLoading(false);
     }
   };
 
@@ -284,6 +291,12 @@ const ReceptionistDashboard = () => {
             </div>
 
             <form onSubmit={handleRegisterPatient} className="space-y-4">
+              {formError && (
+                <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-xl flex gap-2 text-xs">
+                  <AlertCircle className="w-4.5 h-4.5 shrink-0" />
+                  <p className="leading-relaxed font-semibold">{formError}</p>
+                </div>
+              )}
               <div>
                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Full Name</label>
                 <input
@@ -336,10 +349,17 @@ const ReceptionistDashboard = () => {
 
               <button
                 type="submit"
+                disabled={formLoading}
                 className="w-full py-3 bg-sky-600 hover:bg-sky-500 text-white rounded-xl font-semibold text-sm transition-all duration-200 shadow-md shadow-sky-500/5 cursor-pointer flex items-center justify-center gap-2"
               >
-                <Send size={16} />
-                <span>Register & Generate QR</span>
+                {formLoading ? (
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                ) : (
+                  <>
+                    <Send size={16} />
+                    <span>Register & Generate QR</span>
+                  </>
+                )}
               </button>
             </form>
           </div>

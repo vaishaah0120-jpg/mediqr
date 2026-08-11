@@ -1,5 +1,8 @@
 import Appointment from '../models/Appointment.js';
+import Patient from '../models/Patient.js';
+import Doctor from '../models/Doctor.js';
 import { mockAppointments, mockPatients, mockDoctors } from '../config/mockData.js';
+import QRCode from 'qrcode';
 
 // @desc    Schedule a new appointment
 // @route   POST /api/appointments
@@ -151,6 +154,203 @@ export const updateAppointmentStatus = async (req, res, next) => {
     }
 
     res.json({ success: true, data: appointment });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Public endpoint to book appointment (creates or finds patient profile automatically)
+// @route   POST /api/appointments/public
+// @access  Public
+export const createPublicAppointment = async (req, res, next) => {
+  try {
+    const {
+      fullName,
+      age,
+      gender,
+      bloodGroup,
+      phone,
+      address,
+      emergencyContactName,
+      emergencyContactPhone,
+      emergencyContactRelation,
+      doctorId,
+      appointmentDate,
+    } = req.body;
+
+    // Validate required fields
+    if (
+      !fullName ||
+      !age ||
+      !gender ||
+      !bloodGroup ||
+      !phone ||
+      !address ||
+      !emergencyContactName ||
+      !emergencyContactPhone ||
+      !emergencyContactRelation ||
+      !doctorId ||
+      !appointmentDate
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed: All fields are required to book an appointment.',
+      });
+    }
+
+    // Verify appointment date is valid and in the future
+    const date = new Date(appointmentDate);
+    if (isNaN(date.getTime()) || date < new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed: Appointment date must be a valid future date.',
+      });
+    }
+
+    let patientRecord = null;
+
+    if (process.env.USE_MOCK_DB === 'true') {
+      // Check if patient already exists in mocks by phone
+      patientRecord = mockPatients.find((p) => p.phone === phone);
+
+      if (!patientRecord) {
+        // Generate patientId
+        let patientId = '';
+        let isUnique = false;
+        let attempts = 0;
+        while (!isUnique && attempts < 10) {
+          const randNum = Math.floor(100000 + Math.random() * 900000);
+          patientId = `MEDQR-${randNum}`;
+          attempts++;
+          isUnique = !mockPatients.some((p) => p.patientId === patientId);
+        }
+
+        // Generate QR code
+        const qrCode = await QRCode.toDataURL(patientId, {
+          errorCorrectionLevel: 'H',
+          margin: 2,
+          scale: 8,
+        });
+
+        patientRecord = {
+          _id: `mock-patient-${Date.now()}`,
+          patientId,
+          fullName,
+          age: parseInt(age, 10),
+          gender,
+          bloodGroup,
+          phone,
+          address,
+          emergencyContact: {
+            name: emergencyContactName,
+            phone: emergencyContactPhone,
+            relation: emergencyContactRelation,
+          },
+          qrCode,
+        };
+
+        mockPatients.push(patientRecord);
+      }
+
+      // Check if doctor exists
+      const doctorExists = mockDoctors.some((d) => d._id === doctorId);
+      if (!doctorExists) {
+        return res.status(404).json({
+          success: false,
+          message: 'Referenced Doctor ID does not exist in databases',
+        });
+      }
+
+      const newAppointment = {
+        _id: `mock-app-${Date.now()}`,
+        patientId: patientRecord._id,
+        doctorId,
+        appointmentDate: date.toISOString(),
+        status: 'Scheduled',
+      };
+
+      mockAppointments.push(newAppointment);
+
+      return res.status(201).json({
+        success: true,
+        data: {
+          appointment: newAppointment,
+          patient: patientRecord,
+        },
+      });
+    }
+
+    // REAL DB FLOW
+    // Check if patient already exists by phone
+    patientRecord = await Patient.findOne({ phone });
+
+    if (!patientRecord) {
+      // Generate unique patientId
+      let patientId = '';
+      let isUnique = false;
+      let attempts = 0;
+      while (!isUnique && attempts < 10) {
+        const randNum = Math.floor(100000 + Math.random() * 900000);
+        patientId = `MEDQR-${randNum}`;
+        attempts++;
+        const existing = await Patient.findOne({ patientId });
+        isUnique = !existing;
+      }
+
+      if (!isUnique) {
+        return res.status(500).json({
+          success: false,
+          message: 'System error: failed to generate a unique Patient QR identifier. Please try again.',
+        });
+      }
+
+      // Generate QR Code data URL (base64 image)
+      const qrCode = await QRCode.toDataURL(patientId, {
+        errorCorrectionLevel: 'H',
+        margin: 2,
+        scale: 8,
+      });
+
+      patientRecord = await Patient.create({
+        patientId,
+        fullName,
+        age: parseInt(age, 10),
+        gender,
+        bloodGroup,
+        phone,
+        address,
+        emergencyContact: {
+          name: emergencyContactName,
+          phone: emergencyContactPhone,
+          relation: emergencyContactRelation,
+        },
+        qrCode,
+      });
+    }
+
+    // Verify doctor exists in DB
+    const doctorExists = await Doctor.findById(doctorId);
+    if (!doctorExists) {
+      return res.status(404).json({
+        success: false,
+        message: 'Referenced Doctor ID does not exist in databases',
+      });
+    }
+
+    const appointment = await Appointment.create({
+      patientId: patientRecord._id,
+      doctorId,
+      appointmentDate: date,
+      status: 'Scheduled',
+    });
+
+    res.status(201).json({
+      success: true,
+      data: {
+        appointment,
+        patient: patientRecord,
+      },
+    });
   } catch (error) {
     next(error);
   }
