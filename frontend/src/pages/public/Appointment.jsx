@@ -51,7 +51,7 @@ const Appointment = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/doctors/public');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/doctors/public`);
       const resData = await response.json();
       if (response.ok && resData.success) {
         setDoctors(resData.data || []);
@@ -156,7 +156,7 @@ const Appointment = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/appointments/public', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/appointments/public`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
