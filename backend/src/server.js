@@ -13,12 +13,15 @@ import reportRoutes from './routes/reportRoutes.js';
 
 // Error Handler Import
 import { errorHandler } from './middleware/errorMiddleware.js';
+import { seedDatabase, autoSeedIfEmpty } from './utils/seeder.js';
 
 // Load environment variables
 dotenv.config();
 
 // Connect to Database
 await connectDB();
+// Auto seed demo data if database is empty
+await autoSeedIfEmpty();
 
 const app = express();
 
@@ -34,9 +37,19 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/medical-records', medicalRecordRoutes);
 app.use('/api/reports', reportRoutes);
 
-// Base route
-app.get('/', (req, res) => {
-  res.json({ message: 'MediQR API is running...' });
+// Seed route (convenience endpoint for cloud/demo deployments)
+app.all('/api/seed', async (req, res) => {
+  try {
+    const result = await seedDatabase({ clearExisting: req.query.reset === 'true' });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Base and health check routes
+app.get(['/', '/api'], (req, res) => {
+  res.json({ message: 'MediQR API is running...', status: 'online' });
 });
 
 // Global Error Handler (must be after routes)
