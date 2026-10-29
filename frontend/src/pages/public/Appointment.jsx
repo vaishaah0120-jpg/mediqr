@@ -156,7 +156,7 @@ const Appointment = () => {
     };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/appointments/public`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/appointments/public`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
